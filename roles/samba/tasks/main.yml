@@ -1,0 +1,7 @@
+---
+- name: install samba
+  apt: pkg=samba
+
+- name: copy smb.conf
+  copy: src=smb.conf dest=/etc/samba/smb.conf
+  notify: restart samba

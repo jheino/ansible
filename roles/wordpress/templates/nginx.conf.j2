@@ -1,0 +1,15 @@
+server {
+	listen 80;
+	listen 443 http2;
+	listen [::]:80;
+	listen [::]:443 http2;
+	server_name {{ wordpress_hostname }};
+	root /srv/www/{{ wordpress_hostname }};
+
+	try_files $uri $uri/ /index.php;
+	location ~ \.php$ {
+		include /etc/nginx/fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/var/run/php5-fpm.{{ wordpress_owner }}.sock;
+	}
+}

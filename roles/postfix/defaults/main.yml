@@ -1,0 +1,3 @@
+---
+postfix_myhostname: "{{ ansible_fqdn }}"
+postfix_mydestination: "{{ ansible_fqdn }}, localhost"

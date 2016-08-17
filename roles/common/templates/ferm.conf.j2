@@ -1,0 +1,24 @@
+domain (ip ip6) {
+	table filter {
+		chain INPUT {
+			policy DROP;
+			mod state {
+				state INVALID DROP;
+				state (RELATED ESTABLISHED) ACCEPT;
+			}
+			interface lo ACCEPT;
+			proto icmp ACCEPT;
+			proto tcp dport (22 80 445) ACCEPT;
+			proto tcp REJECT reject-with tcp-reset;
+			@if @eq($DOMAIN, ip) {
+				proto udp REJECT reject-with icmp-port-unreachable;
+				REJECT reject-with icmp-proto-unreachable;
+			}
+			@if @eq($DOMAIN, ip6) {
+				REJECT reject-with icmp-admin-prohibited;
+			}
+		}
+		chain FORWARD policy DROP;
+		chain OUTPUT policy ACCEPT;
+	}
+}

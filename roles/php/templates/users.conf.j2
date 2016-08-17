@@ -1,0 +1,13 @@
+{% for username in php_user_pools %}
+[{{ username }}]
+user = {{ username }}
+group = {{ username }}
+listen = /var/run/php5-fpm.{{ username }}.sock
+listen.owner = nginx
+listen.group = nginx
+listen.mode = 0600
+pm = ondemand
+pm.max_children = 15
+chdir = /
+
+{% endfor %}

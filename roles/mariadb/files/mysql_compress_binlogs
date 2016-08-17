@@ -1,0 +1,5 @@
+#!/bin/sh -eu
+head -n -1 /var/log/mysql/mariadb-bin.index | while read line
+do
+	test -e "$line" && xz "$line"
+done

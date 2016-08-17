@@ -1,0 +1,51 @@
+---
+- name: add MariaDB public key
+  apt_key: data="{{ lookup('file', 'mariadb.gpg') }}"
+
+- name: add Percona public key
+  apt_key: data="{{ lookup('file', 'percona.gpg') }}"
+
+- name: add MariaDB repository
+  apt_repository: repo="deb {{ mariadb_mirror }}/repo/{{ mariadb_version }}/debian {{ ansible_distribution_release }} main"
+
+- name: add Percona repository
+  apt_repository: repo="deb http://repo.percona.com/apt {{ ansible_distribution_release }} main"
+
+- name: configure APT preferences
+  copy: src=preferences dest=/etc/apt/preferences.d/mariadb
+
+- name: install packages
+  apt: pkg={{ item }}
+  with_items:
+    - mariadb-server
+    - percona-toolkit
+    - percona-xtrabackup
+    - python-mysqldb
+  tags: packages
+
+- name: change root password
+  mysql_user: name=root host={{ item }} password={{ mariadb_root_password }}
+  with_items:
+    - "{{ ansible_hostname|lower }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: create /root/my.cnf
+  template: src=user.cnf.j2 dest=/root/.my.cnf mode=0600
+  tags: configuration
+
+- name: configure MariaDB
+  template: src=my.cnf.j2 dest=/etc/mysql/my.cnf
+  notify: restart mariadb
+  tags: configuration
+
+- name: configure MariaDB character set
+  copy: src=mariadb.cnf dest=/etc/mysql/conf.d/mariadb.cnf
+  notify: restart mariadb
+  tags: configuration
+
+- name: copy scripts
+  copy: src={{ item }} dest=/usr/local/bin/{{ item }} mode=0755
+  with_items:
+    - mysql_compress_binlogs

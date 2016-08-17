@@ -1,0 +1,11 @@
+---
+- name: install postfix
+  apt: pkg=postfix
+  tags: packages
+
+- name: ensure /etc/mailname has FQDN
+  copy: dest=/etc/mailname content={{ ansible_fqdn }}
+  
+- name: configure postfix
+  template: src=main.cf.j2 dest=/etc/postfix/main.cf
+  notify: restart postfix
