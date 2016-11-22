@@ -1,18 +1,28 @@
 ---
 - name: download wordpress
-  get_url: url=http://{{ mirror }}wordpress.org/wordpress-{{ wordpress_version }}.tar.gz
-           dest=/var/cache/ansible/wordpress-{{ wordpress_version }}.tar.gz
-           sha256sum={{ wordpress_sha256sum }}
+  get_url:
+    url: http://{{ mirror }}wordpress.org/wordpress-{{ wordpress_version }}.tar.gz
+    dest: /var/cache/ansible/wordpress-{{ wordpress_version }}.tar.gz
+    sha256sum: "{{ wordpress_sha256sum }}"
 
 - name: create wordpress directory
-  file: dest=/srv/www/{{ wordpress_hostname }} state=directory owner={{ wordpress_owner }} group=nginx mode=0750
+  file:
+    dest: /srv/www/{{ wordpress_hostname }}
+    state: directory
+    owner: "{{ wordpress_owner }}"
+    group: nginx
+    mode: 0750
 
 - name: extract wordpress
   become: yes
   become_user: "{{ wordpress_owner }}"
-  command: tar -C /srv/www/{{ wordpress_hostname }} -oxf /var/cache/ansible/wordpress-{{ wordpress_version }}.tar.gz --strip-components=1
-           creates=/srv/www/{{ wordpress_hostname }}/index.php
+  command:
+    tar -C /srv/www/{{ wordpress_hostname }} -oxf /var/cache/ansible/wordpress-{{ wordpress_version }}.tar.gz --strip-components=1
+  args:
+    creates: /srv/www/{{ wordpress_hostname }}/index.php
 
 - name: configure nginx
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ wordpress_hostname }}.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/conf.d/{{ wordpress_hostname }}.conf
   notify: reload nginx

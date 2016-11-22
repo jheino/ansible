@@ -1,28 +1,42 @@
 ---
 - name: set timezone
-  copy: dest=/etc/timezone content="{{ timezone }}\n"
+  copy:
+    dest: /etc/timezone
+    content: "{{ timezone }}\n"
   notify: reconfigure tzdata
 
 - name: configure APT data sources
-  template: src=sources.list.j2 dest=/etc/apt/sources.list
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
   notify: update APT cache
 
 - name: configure backports
-  template: src=backports.j2 dest=/etc/apt/preferences.d/backports
+  template:
+    src: backports.j2
+    dest: /etc/apt/preferences.d/backports
 
 - name: disable xon/xoff
-  copy: dest=/etc/profile.d/disable_xon_xoff.sh content="test -t 0 && stty -ixon\n"
+  copy:
+    dest: /etc/profile.d/disable_xon_xoff.sh
+    content: "test -t 0 && stty -ixon\n"
 
 - name: force color prompt
-  copy: dest=/etc/profile.d/force_color_prompt.sh content="force_color_prompt=yes\n"
+  copy:
+    dest: /etc/profile.d/force_color_prompt.sh
+    content: "force_color_prompt=yes\n"
 
 - name: set default umask to 077
-  lineinfile: dest=/etc/login.defs regexp="^UMASK\s+\d+" line="UMASK\t\t077"
+  lineinfile:
+    dest: /etc/login.defs
+    regexp: "^UMASK\s+\d+"
+    line: "UMASK\t\t077"
 
 - meta: flush_handlers
 
 - name: install packages
-  apt: pkg={{ item }}
+  apt:
+    name: {{ item }}
   with_items:
     - apticron
     - ferm
@@ -34,33 +48,43 @@
     - unzip
 
 - name: configure ferm
-  template: src=ferm.conf.j2 dest=/etc/ferm/ferm.conf
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.conf
   notify: reload ferm
 
 - meta: flush_handlers
 
 - name: configure tmux
-  copy: src=tmux.conf dest=/etc/tmux.conf
+  copy:
+    src: tmux.conf
+    dest: /etc/tmux.conf
 
 - name: ensure /var/cache/ansible exists
-  file: path=/var/cache/ansible state=directory
+  file:
+    path: /var/cache/ansible
+    state: directory
 
 - name: create groups
-  group: name={{ item.1 }}
+  group:
+    name: "{{ item.1 }}"
   with_subelements:
-    - '{{ users }}'
+    - "{{ users }}"
     - groups
 
 - name: create users
-  user: name={{ item.name }}
-        groups={{ item.groups | default([]) | join(',') }}
-        append=yes
-        password={{ item.password|default('!') }}
-        shell=/bin/bash
-  with_items: '{{ users }}'
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | default([]) | join(',') }}"
+    append: yes
+    password: "{{ item.password|default('!') }}"
+    shell: /bin/bash
+  with_items: "{{ users }}"
 
 - name: enable authorized keys
-  authorized_key: user={{ item.0.name }} key="{{ item.1|default }}"
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ item.1|default }}"
   with_subelements:
-    - '{{ users }}'
+    - "{{ users }}"
     - authorized_keys

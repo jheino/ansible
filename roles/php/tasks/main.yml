@@ -1,6 +1,7 @@
 ---
 - name: install packages
-  apt: pkg={{ item }}
+  apt:
+    name: "{{ item }}"
   notify: restart php5-fpm
   with_items:
     - php5-cli
@@ -10,16 +11,27 @@
     - php5-mysqlnd
 
 - name: set socket owner to nginx
-  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp="^listen\.owner = .*" line="listen.owner = nginx"
+  lineinfile:
+    dest: /etc/php5/fpm/pool.d/www.conf
+    regexp: "^listen\.owner = .*"
+    line: "listen.owner = nginx"
   notify: restart php5-fpm
 
 - name: set socket group to nginx
-  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp="^listen\.group = .*" line="listen.group = nginx"
+  lineinfile:
+    dest: /etc/php5/fpm/pool.d/www.conf
+    regexp: "^listen\.group = .*"
+    line: "listen.group = nginx"
   notify: restart php5-fpm
 
 - name: configure user pools
-  template: src=users.conf.j2 dest=/etc/php5/fpm/pool.d/users.conf
+  template:
+    src: users.conf.j2
+    dest: /etc/php5/fpm/pool.d/users.conf
   notify: restart php5-fpm
 
 - name: copy composer
-  copy: src=composer.phar dest=/usr/local/bin/composer mode=0755
+  copy:
+    src: composer.phar
+    dest: /usr/local/bin/composer
+    mode: 0755

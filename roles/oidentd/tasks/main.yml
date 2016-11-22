@@ -1,7 +1,10 @@
 ---
 - name: install oidentd
-  apt: pkg=oidentd
+  apt:
+    name: oidentd
 
 - name: configure /etc/default/oidentd
-  copy: src=oidentd dest=/etc/default/oidentd
+  copy:
+    src: oidentd
+    dest: /etc/default/oidentd
   notify: restart oidentd

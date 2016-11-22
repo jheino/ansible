@@ -1,7 +1,8 @@
 ---
 - name: download adminer
-  get_url: url=http://{{ mirror }}www.adminer.org/static/download/{{ adminer_version }}/adminer-{{ adminer_version }}-mysql-en.php
-           dest=/srv/www/default/adminer.php
-           sha256sum={{ adminer_sha256sum }}
-           owner=www-data
-           group=www-data
+  get_url:
+    url: http://{{ mirror }}www.adminer.org/static/download/{{ adminer_version }}/adminer-{{ adminer_version }}-mysql-en.php
+    dest: /srv/www/default/adminer.php
+    sha256sum: "{{ adminer_sha256sum }}"
+    owner: www-data
+    group: www-data

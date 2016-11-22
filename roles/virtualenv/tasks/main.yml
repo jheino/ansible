@@ -1,26 +1,40 @@
 ---
 - name: create virtualenv user
-  user: name=virtualenv shell=/bin/bash system=yes
+  user:
+    name: virtualenv
+    shell: /bin/bash
+    system: yes
 
 - name: ensure virtualenv has public access
-  file: path=/home/virtualenv mode=0755
+  file:
+    path: /home/virtualenv
+    mode: 0755
 
 - name: download virtualenv
-  get_url: url=http://{{ mirror }}pypi.python.org/packages/source/v/virtualenv/virtualenv-{{ virtualenv_version }}.tar.gz
-           dest=/var/cache/ansible/virtualenv-{{ virtualenv_version }}.tar.gz
-           sha256sum={{ virtualenv_sha256sum }}
+  get_url:
+    url: http://{{ mirror }}pypi.python.org/packages/source/v/virtualenv/virtualenv-{{ virtualenv_version }}.tar.gz
+    dest: /var/cache/ansible/virtualenv-{{ virtualenv_version }}.tar.gz
+    sha256sum: "{{ virtualenv_sha256sum }}"
 
 - name: extract virtualenv
-  command: tar -C /opt --no-same-owner --no-same-permissions -xf /var/cache/ansible/virtualenv-{{ virtualenv_version }}.tar.gz
-           creates=/opt/virtualenv-{{ virtualenv_version }}
+  command:
+    tar -C /opt --no-same-owner --no-same-permissions -xf /var/cache/ansible/virtualenv-{{ virtualenv_version }}.tar.gz
+  args:
+    creates: /opt/virtualenv-{{ virtualenv_version }}
 
 - become: yes
   become_user: virtualenv
   block:
   - name: create virtualenv
-    command: /opt/virtualenv-{{ virtualenv_version }}/virtualenv.py /home/virtualenv
-             creates=/home/virtualenv/bin/pip
+    command:
+      /opt/virtualenv-{{ virtualenv_version }}/virtualenv.py /home/virtualenv
+    args:
+      creates: /home/virtualenv/bin/pip
   - name: create .pip
-    file: path=/home/virtualenv/.pip state=directory
+    file:
+      path: /home/virtualenv/.pip
+      state: directory
   - name: copy pip.conf
-    copy: src=pip.conf dest=/home/virtualenv/.pip/pip.conf
+    copy:
+      src: pip.conf
+      dest: /home/virtualenv/.pip/pip.conf
