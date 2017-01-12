@@ -58,11 +58,16 @@ http {
 	gzip_types text/plain text/css text/javascript text/xml application/atom+xml application/xhtml+xml;
 	gzip_vary on;
 
-	# Catch-all
+	# Catch-all HTTP
 	server {
 		listen 80 default_server;
-		listen 443 default_server ssl http2;
 		listen [::]:80 default_server;
+		return 301 https://$host$request_uri;
+	}
+
+	# Catch-all HTTPS
+	server {
+		listen 443 default_server ssl http2;
 		listen [::]:443 default_server ssl http2;
 
 		root /srv/www/default;
