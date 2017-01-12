@@ -38,6 +38,8 @@ http {
 	# Security
 	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
+	ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+	ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
 	ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
 	ssl_dhparam dhparam.pem;
 	ssl_prefer_server_ciphers on;
