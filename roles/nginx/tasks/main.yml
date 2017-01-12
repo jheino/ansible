@@ -1,8 +1,8 @@
 ---
 - name: add nginx public key
   apt_key:
-    data: "{{ lookup('file', 'nginx.gpg') }}"
-    state: present
+    id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+    keyserver: keyserver.ubuntu.com
 
 - name: add nginx repository
   apt_repository:
