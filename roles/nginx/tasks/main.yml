@@ -10,7 +10,10 @@
 
 - name: install packages
   apt:
-    name: nginx
+    name: "{{ item }}"
+  with_items:
+    - nginx
+    - ssl-cert
 
 - name: delete default nginx configuration
   file:
