@@ -5,12 +5,6 @@
     content: "{{ timezone }}\n"
   notify: reconfigure tzdata
 
-- name: configure APT data sources
-  template:
-    src: sources.list.j2
-    dest: /etc/apt/sources.list
-  notify: update APT cache
-
 - name: disable xon/xoff
   copy:
     dest: /etc/profile.d/disable_xon_xoff.sh
