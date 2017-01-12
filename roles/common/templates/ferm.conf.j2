@@ -8,7 +8,7 @@ domain (ip ip6) {
 			}
 			interface lo ACCEPT;
 			proto icmp ACCEPT;
-			proto tcp dport (22 80 445) ACCEPT;
+			proto tcp dport (22 80 443) ACCEPT;
 			proto tcp REJECT reject-with tcp-reset;
 			@if @eq($DOMAIN, ip) {
 				proto udp REJECT reject-with icmp-port-unreachable;
