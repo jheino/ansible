@@ -18,8 +18,8 @@
 - name: set default umask to 077
   lineinfile:
     dest: /etc/login.defs
-    regexp: '^UMASK\s+\d+'
-    line: 'UMASK\t\t077'
+    regexp: "^UMASK\\s+\\d+"
+    line: "UMASK\t\t077"
 
 - meta: flush_handlers
 
